@@ -1,0 +1,120 @@
+package employee;
+
+import java.sql.*;
+import java.util.ArrayList;
+
+public class db {
+
+    private static String url = "";
+    private static final String dbname = "employee";
+    private static Connection con;
+    private static ResultSet rs;
+    private static Statement st;
+    private static PreparedStatement ps;
+
+    private static void setURL() {
+        url = "jdbc:mysql://localhost/" + dbname
+                //to use arabic language in data base
+                + "?useUnicode=true&characterEncoding=UTF-8&serverTimezone = UTC";
+
+    }
+
+    private static void setConnection() {
+        try {
+            setURL();
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection(url, "root", "");
+        } catch (ClassNotFoundException | SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    public static double[] fillToArray() {
+        //initial value
+        double[] salaries = {0};
+        try {
+            setConnection();
+            String sql = "SELECT salary FROM Employee";
+            st = con.createStatement();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            salaries = new double[6];
+            int i = 0;
+            while (rs.next()) {
+                // get value in salary column
+                // and add to array
+                salaries[i] = rs.getDouble("salary");
+                i++;
+            }
+            con.close();
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return salaries;
+    }
+    
+    public static int[] fillWithAges() {
+        //initial value
+        int[] ages = {0};
+        try {
+            setConnection();
+            st = con.createStatement();
+            String sql = "SELECT age FROM Employee";
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            ages = new int[6];
+            int i = 0;
+            while (rs.next()) {
+                // get value in age column
+                // and add to array
+                ages[i] = rs.getInt("age");
+                i++;
+            }
+            con.close();
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return ages;
+    }
+
+    public static ArrayList getSalary() {
+        ArrayList<emp> salaries = new ArrayList<emp>();
+        try {
+            setConnection();
+            st = con.createStatement();
+            String sql = "SELECT salary FROM Employee";
+            rs = st.executeQuery(sql);
+            while (rs.next()) {
+                emp Emp = new emp();
+                Emp.setSalary(rs.getDouble("salary"));
+                salaries.add(Emp);
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return salaries;
+    }
+    
+    public static Object[] getName(){
+        Object[] names = {0};
+        try {
+            setConnection();
+            String sql = "SELECT fname FROM Employee";
+            st = con.createStatement();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            names = new Object[6];
+            int i = 0;
+            while (rs.next()) {
+                // get value in fname column
+                // and add to array
+                names[i] = rs.getString("fname");
+                i++;
+            }
+            con.close();
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return names;
+    }
+}
